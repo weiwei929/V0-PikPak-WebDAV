@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebDAV Video Explorer</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/id-navigation.css">
+</head>
+<body class="light-mode">
+    <div class="container">
+        <header>
+            <h1>PikPak WebDAV Player</h1>
+            <div class="theme-toggle">
+                <button id="theme-toggle-btn" title="Toggle dark/light mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+        
+        <div id="connection-form" class="section">
+            <h2>Connect to WebDAV</h2>
+            <div class="form-group">
+                <label for="webdav-url">WebDAV URL:</label>
+                <input type="text" id="webdav-url" placeholder="https://mypikpak.com/dav" value="https://mypikpak.com/dav">
+            </div>
+            <div class="form-group">
+                <label for="webdav-username">Username:</label>
+                <input type="text" id="webdav-username" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label for="webdav-password">Password:</label>
+                <input type="password" id="webdav-password" placeholder="password">
+            </div>
+            <div class="form-actions">
+                <button id="connect-button" class="primary-button">
+                    <i class="fas fa-plug"></i> Connect
+                </button>
+            </div>
+            <div id="connection-status" class="status"></div>
+        </div>
+        
+        <div id="app-container" class="hidden">
+            <div id="user-info" class="section">
+                <div class="user-details">
+                    <i class="fas fa-user"></i>
+                    <span id="username-display"></span>
+                </div>
+                <button id="logout-button" class="secondary-button">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+            
+            <div class="main-content">
+                <div id="file-browser" class="section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-folder-open"></i> File Browser</h2>
+                        <div class="search-container">
+                            <input type="text" id="search-input" placeholder="Search files...">
+                            <button id="search-button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="current-path" class="path-display">Path: /</div>
+                    
+                    <div id="breadcrumbs" class="breadcrumbs">
+                        <span class="breadcrumb" data-path="/">
+                            <i class="fas fa-home"></i> Root
+                        </span>
+                    </div>
+                    
+                    <div class="file-controls">
+                        <button id="refresh-button" title="Refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button id="create-playlist-button" title="Create playlist from this folder">
+                            <i class="fas fa-list"></i> Create Playlist
+                        </button>
+                        <div class="view-toggle">
+                            <button id="list-view-button" class="active" title="List view">
+                                <i class="fas fa-list"></i>
+                            </button>
+                            <button id="grid-view-button" title="Grid view">
+                                <i class="fas fa-th"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="loading-indicator" class="hidden">
+                        <div class="spinner"></div>
+                        <p>Loading...</p>
+                    </div>
+                    
+                    <div id="file-list" class="list-view"></div>
+                </div>
+                
+                <div id="video-player" class="section hidden">
+                    <div class="section-header">
+                        <h2><i class="fas fa-film"></i> Video Player</h2>
+                        <div class="player-controls">
+                            <button id="minimize-player" title="Minimize player">
+                                <i class="fas fa-compress"></i>
+                            </button>
+                            <button id="maximize-player" title="Maximize player">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="current-video" class="video-title"></div>
+                    
+                    <div class="video-container">
+                        <video id="player" controls crossorigin="anonymous"></video>
+                    </div>
+                    
+                    <div class="playback-controls">
+                        <div class="playback-speed">
+                            <label for="speed-selector">Speed:</label>
+                            <select id="speed-selector">
+                                <option value="0.25">0.25x</option>
+                                <option value="0.5">0.5x</option>
+                                <option value="0.75">0.75x</option>
+                                <option value="1" selected>1x</option>
+                                <option value="1.25">1.25x</option>
+                                <option value="1.5">1.5x</option>
+                                <option value="1.75">1.75x</option>
+                                <option value="2">2x</option>
+                            </select>
+                        </div>
+                        
+                        <button id="pip-button" title="Picture in Picture">
+                            <i class="fas fa-external-link-alt"></i> PiP
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="playlist-panel" class="section hidden">
+                <div class="section-header">
+                    <h2><i class="fas fa-list"></i> Playlist</h2>
+                    <button id="close-playlist" title="Close playlist">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="playlist-controls">
+                    <button id="play-all-button">
+                        <i class="fas fa-play"></i> Play All
+                    </button>
+                    <button id="shuffle-button">
+                        <i class="fas fa-random"></i> Shuffle
+                    </button>
+                    <div class="playlist-info">
+                        <span id="playlist-count">0 videos</span>
+                    </div>
+                </div>
+                
+                <div id="playlist-items"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="toast-container"></div>
+    
+    <script id="file-template" type="text/template">
+        <div class="file-item {{isDir}}" data-path="{{path}}" data-name="{{name}}" data-is-dir="{{dirFlag}}">
+            <div class="file-icon">{{icon}}</div>
+            <div class="file-info">
+                <div class="file-name">{{name}}</div>
+                <div class="file-details">{{details}}</div>
+            </div>
+            <span class="id-badge">{{id}}</span>
+        </div>
+    </script>
+    
+    <div class="settings-panel">
+        <div class="settings-section">
+            <h3>高级选项</h3>
+            <button id="clear-cache-btn" class="btn">清除路径缓存</button>
+            <div class="setting-description">如遇到文件访问问题，请尝试清除缓存</div>
+        </div>
+    </div>
+    
+    <script src="/js/main.js"></script>
+</body>
+</html>

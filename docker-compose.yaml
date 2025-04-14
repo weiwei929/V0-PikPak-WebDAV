@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  pikpak-webdav-player:
+    build: .
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    volumes:
+      - ./app.py:/app/app.py
+      - ./static:/app/static
+      - flask_sessions:/app/flask_sessions
+    environment:
+      - SECRET_KEY=your_secret_key_here  # Change this in production
+
+volumes:
+  flask_sessions:
